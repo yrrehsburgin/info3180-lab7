@@ -8,6 +8,6 @@ class UploadForm(FlaskForm):
     description = TextAreaField('Description', validators=[DataRequired()])
     photo = FileField('Photo', validators=[
         FileRequired(),
-        FileAllowed(['jpg', 'png', 'JPG'], 'Images only!')
+        FileAllowed(['jpg', 'png', 'JPG','jpeg'], 'Images only!')
     ])
     

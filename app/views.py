@@ -36,9 +36,9 @@ def upload():
     form=UploadForm()
     if request.method == "POST" and form.validate_on_submit():
         description = form.description.data
-        photo = form.photo.data
-        filename = secure_filename(photo.filename)
-        photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        file = form.photo.data
+        filename = secure_filename(file.filename)
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         result = {"message": "File Upload Successful", "filename": filename, "description": description}
         return jsonify(result=result)
     error_collection = form_errors(form)
