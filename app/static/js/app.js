@@ -47,12 +47,36 @@ const uploadForm = Vue.component('upload-form',{
     template: ` 
     <div class="upload">
         <h2>Upload Form</h2>
+        
+        <div v-if='messageFlag' >
+        
+            <div v-if="!errorFlag ">
+                <div class="alert alert-success" >
+                    <p>File Upload Successful</p>                
+                </div>
+            </div>
+            
+            
+            <div v-else >
+                <ul class="alert alert-danger">
+                    <li v-for="error in errorss">
+                        {{ error[0] }}<br>
+                    </li>
+                    <li v-for="error in errorss">
+                        {{ error[1] }}
+                    </li>
+                </ul>
+            </div>
+            
+        </div>
+        
         <div class="form-inline d-flex justify-content">
             <form id="uploadForm"  @submit.prevent="uploadPhoto" method="POST" enctype="multipart/form-data">
                 <div>
                 <div for="msg">Description </div>
-                <textarea class="form-control" rows="2"  cols="70" id="msg" name="description"></textarea><br></br>
+                <textarea class="form-control" rows="2"  cols="95" id="msg" name="description"></textarea><br></br>
                 <div for="pic">Photo Upload </div>
+                
                 <input type="file" name="photo" id="upload"/> </br>
                 </div></br>
                 <button class="btn btn-success" type="submit">Submit</button>
@@ -63,6 +87,7 @@ const uploadForm = Vue.component('upload-form',{
     methods: {
     uploadPhoto: function(){
         
+        let self = this;
         let uploadForm = document.getElementById('uploadForm');
         let form_data = new FormData(uploadForm);
         
@@ -79,12 +104,36 @@ const uploadForm = Vue.component('upload-form',{
         })
         .then(function (jsonResponse) {
             // display a success message
-            console.log(jsonResponse);
+             self.messageFlag = true;
+
+                if (jsonResponse.hasOwnProperty("errors")){
+                    self.errorFlag=true;
+                    self.errorss = jsonResponse.errors;
+                }
+                else if(jsonResponse.hasOwnProperty("message")){
+                    self.errorFlag = false;
+                    self.response = jsonResponse.message;
+                    
+                }
         })
         .catch(function (error) {
             console.log(error);
         });
-    }
+    },
+       onFileSelected: function(){
+            let self = this;
+            let filenameArr = $("#photo")[0].value.split("\\");
+            self.filename = filenameArr[filenameArr.length-1];
+        }
+    },
+    data: function(){
+        return {
+            errorFlag: false,
+            messageFlag: false,
+            errorss: [],
+            response:[],
+            filename: ""
+        };
     }
 });
 
